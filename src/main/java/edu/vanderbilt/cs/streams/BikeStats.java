@@ -1,9 +1,6 @@
 package edu.vanderbilt.cs.streams;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.OptionalDouble;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
@@ -41,8 +38,21 @@ public class BikeStats {
      * @param windowSize
      * @return
      */
-    public Stream<BikeRide.DataFrame> averagedDataFrameStream(int windowSize){
-        return Stream.empty();
+    public Stream<BikeRide.DataFrame> averagedDataFrameStream(int windowSize) {
+
+
+        List<BikeRide.DataFrame> list = this.ride.fusedFramesStream().collect(Collectors.toList());
+        List<BikeRide.DataFrame> listWindowFrame= new ArrayList<>();
+
+        StreamUtils.slidingWindow(list, windowSize).forEach(dataFrame->{
+            listWindowFrame.add(new BikeRide.DataFrame(dataFrame.get(0).coordinate,
+                    dataFrame.stream().mapToDouble(f -> f.grade).average().getAsDouble(),
+                    dataFrame.stream().mapToDouble(f -> f.altitude).average().getAsDouble(),
+                    dataFrame.stream().mapToDouble(f -> f.velocity).average().getAsDouble(),
+                    dataFrame.stream().mapToDouble(f -> f.heartRate).average().getAsDouble()
+            ));
+        });
+        return listWindowFrame.stream();
     }
 
     // @ToDo:
@@ -57,7 +67,11 @@ public class BikeStats {
     // the same.
     //
     public Stream<LatLng> locationsOfStops() {
-        return Stream.empty();
+
+     return ride.fusedFramesStream().filter(f->f.velocity==0 )
+             //.filter(f-> f.coordinate.equals(f.coordinate))
+             .map(x->x.coordinate)
+             .collect(Collectors.toList()).stream();
     }
 
 }

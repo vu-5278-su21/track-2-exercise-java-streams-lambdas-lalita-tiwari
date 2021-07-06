@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -16,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BikeRide {
 
-    public static class DataFrame {
+       public static class DataFrame {
         public final double velocity;
         public final double heartRate;
         public final double grade;
@@ -125,7 +123,7 @@ public class BikeRide {
     // Hint: see Arrays.stream(...)
     //
     public DoubleStream heartRateStream() {
-        return DoubleStream.empty();
+        return Arrays.stream(this.heartRate);
     }
 
     // @ToDo:
@@ -134,7 +132,8 @@ public class BikeRide {
     // stream of the specified values
     //
     public DoubleStream velocityStream() {
-        return DoubleStream.empty();
+       return Arrays.stream(this.velocity);
+
     }
 
     // @ToDo:
@@ -142,7 +141,7 @@ public class BikeRide {
     // Implement this method so it returns a
     // stream of the specified values
     public DoubleStream gradeStream() {
-        return DoubleStream.empty();
+        return Arrays.stream(this.grade);
     }
 
     // @ToDo:
@@ -150,7 +149,8 @@ public class BikeRide {
     // Implement this method so it returns a
     // stream of the specified values
     public DoubleStream altitudeStream() {
-        return DoubleStream.empty();
+        return Arrays.stream(this.altitude);
+
     }
 
     // @ToDo:
@@ -158,7 +158,8 @@ public class BikeRide {
     // Implement this method so it returns a
     // stream of the specified values
     public Stream<LatLng> coordinateStream() {
-        return Stream.empty();
+        return Stream.of(this.coordinates);
+
     }
 
 
@@ -170,10 +171,14 @@ public class BikeRide {
     // occurs at each index in each of the corresponding
     // data arrays (e.g., heartRate, velocity, etc.)
     //
-    public Stream<DataFrame> fusedFramesStream() {
-        return Stream.empty();
-    }
 
+    public Stream<DataFrame> fusedFramesStream() {
+        List<DataFrame> dataFrame = new ArrayList<>();
+        for(int i=0; i<coordinates.length;i++) {
+            dataFrame.add(new DataFrame(coordinates[i], grade[i], altitude[i], velocity[i], heartRate[i]));
+        }
+    return dataFrame.stream();
+    }
 
     // Don't change me!
     //

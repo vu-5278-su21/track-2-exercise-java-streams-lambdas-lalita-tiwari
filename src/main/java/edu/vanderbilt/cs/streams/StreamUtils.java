@@ -1,10 +1,15 @@
 package edu.vanderbilt.cs.streams;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.groupingBy;
 
 public class StreamUtils {
 
@@ -13,7 +18,7 @@ public class StreamUtils {
     // Create a method that returns a stream of sliding windows of <windowSize>
     // data points. You should only return complete windows. Each window should be
     // a list of the data points present at that step of the window sliding.
-    public static <T> Stream<List<T>> slidingWindow(List<T> data, int windowSize){
+    public static <T> Stream<List<T>> slidingWindow(List<T> data, int windowSize) {
 
         // Let's assume that we have
         // data = a, b, c, d, e, f
@@ -38,7 +43,13 @@ public class StreamUtils {
         // 3. List.subLIst will be useful to you
         // 4. A windowSize < 1 should return an empty stream
 
-        return Stream.empty();
+
+        if (windowSize < 1) {
+            return Stream.empty();
+        } else {
+            return IntStream.range(0, (data.size() - windowSize+1))
+                    .mapToObj(i -> data.subList(i, Math.min(i + windowSize, data.size())));
+         }
     }
 
     /**
@@ -69,7 +80,8 @@ public class StreamUtils {
             // You need to update this code here to
             // return the average of the property that
             // is extracted with the function `f`
-            return 0.0;
+
+            return window.stream().mapToDouble(f).average().getAsDouble();
         };
     }
 
